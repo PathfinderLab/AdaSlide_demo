@@ -1,0 +1,25 @@
+task:
+    name: "RCC"
+    path: "/data/RCC/CLAM_prepared/HR/"
+    format: "*.png"
+    num_classes: 2
+
+comp_agent:
+    weight_path: "/home/user/Workspace/super_resolution/CompressAgent/weights"
+    agent_list: 
+        - "lambda_010"
+        - "lambda_025"
+        - "lambda_050"
+        - "lambda_075"
+        - "lambda_100"
+    lambda_010: "CompressionAgent_lambda-0.10.pt"
+    lambda_025: "CompressionAgent_lambda-0.25.pt"
+    lambda_050: "CompressionAgent_lambda-0.50.pt"
+    lambda_075: "CompressionAgent_lambda-0.75.pt"
+    lambda_100: "CompressionAgent_lambda-1.00.pt"
+
+result: 
+    path: "/home/user/Workspace/super_resolution/CompressAgent/inferences"
+
+batch_size: 64
+num_workers: 16

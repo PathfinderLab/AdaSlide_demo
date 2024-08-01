@@ -1,0 +1,21 @@
+fixed_variables:
+    number_of_iterations: 3
+    num_classes: 2
+    dice_threshold: 0.6
+    save_top_k: 1
+    max_epochs: 5
+    gpus: [1]
+
+tuning_variables:
+    learning_rate:
+        - 1e-6
+        - 5e-6
+        - 1e-5
+        - 5e-5
+        - 1e-4
+    reward_lambda:
+        - 0.10
+        - 0.25
+        - 0.50
+        - 0.75
+        - 1.00
