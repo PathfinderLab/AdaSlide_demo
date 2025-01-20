@@ -14,7 +14,7 @@ parmap
 opencv-python
 openslide-python
 matplotlib
-huggingface_hub=0.22.2
+huggingface_hub==0.22.2
 chardet
 transformers
 pyvips
