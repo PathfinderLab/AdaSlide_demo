@@ -36,7 +36,8 @@ def get_models():
 
 def run_prediction(project, inference_dataloader, comp_agent_list, result_path="CompressionDecisionAgent/inferences/", get_prob=False):
     results_dict = defaultdict(list)
-
+    project_name = os.path.basename(os.path.normpath(project))
+    
     for batch in tqdm(inference_dataloader, total=len(inference_dataloader)):
         fname, image = batch
         results_dict["fname"].extend(fname)
@@ -55,18 +56,19 @@ def run_prediction(project, inference_dataloader, comp_agent_list, result_path="
     # Save results
     os.makedirs(result_path, exist_ok=True)
     result = genereate_prediction_dataframe(results_dict)
+    
     if get_prob == False:
-        result.to_csv(f"{result_path}/CompAgent_inference_task-{project}.csv", index=False)
+        result.to_csv(f"{result_path}/CompAgent_inference_task-{project_name}.csv", index=False)
     elif get_prob == True:
-        result.to_csv(f"{result_path}/CompAgent_inference_task-{project}_prob.csv", index=False)
+        result.to_csv(f"{result_path}/CompAgent_inference_task-{project_name}_prob.csv", index=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--project')
     parser.add_argument('--patch_format', default="jpg")
     parser.add_argument('--get_prob', default=False, type=bool)
-    args = parser.parse_args()
-
+    args = parser.parse_args()    
+    
     flist = get_inference_image_flist(f"{args.project}/HR/*.{args.patch_format}")
     inference_dataloader = define_inference_dataset_and_dataloader(flist)
     

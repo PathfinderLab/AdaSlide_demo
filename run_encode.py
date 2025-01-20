@@ -26,7 +26,7 @@ def generate_patches(coord, project, slide_format, patch_format, level_of_intere
     if patch_format == "jpg":
         patch = patch.convert("RGB")
     
-    project_name = project.split("/")[-1]
+    project_name = os.path.basename(os.path.normpath(project))
     patch.save(f'{project}/HR/{project_name}_{coord[0]}-{coord[1]}.{patch_format}')
     
     lr_patch = patch.resize((128, 128))
