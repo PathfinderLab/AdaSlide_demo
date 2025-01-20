@@ -25,11 +25,12 @@ def generate_patches(coord, project, slide_format, patch_format, level_of_intere
     
     if patch_format == "jpg":
         patch = patch.convert("RGB")
-        
-    patch.save(f'{project}/HR/{project}_{coord[0]}-{coord[1]}.{patch_format}')
+    
+    project_name = project.split("/")[-1]
+    patch.save(f'{project}/HR/{project_name}_{coord[0]}-{coord[1]}.{patch_format}')
     
     lr_patch = patch.resize((128, 128))
-    lr_patch.save(f'{project}/LR-x4/{project}_{coord[0]}-{coord[1]}.{patch_format}')
+    lr_patch.save(f'{project}/LR-x4/{project_name}_{coord[0]}-{coord[1]}.{patch_format}')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
