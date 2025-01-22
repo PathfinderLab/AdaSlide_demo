@@ -87,7 +87,7 @@ if __name__ == "__main__":
     result_fname = f'{result_path}/AdaSlide_{args.lambda_cond}_Enhanced.tif'
     final_image.tiffsave(result_fname,
                          pyramid=True, tile=True, tile_width=1024, tile_height=1024, 
-                         compression='jpeg', bigtiff=True, Q=90)
+                         compression='jpeg', bigtiff=True, Q=75)
 
     slide = openslide.OpenSlide(result_fname)
     thumbnail = slide.get_thumbnail((1024, 1024)).save(f"{result_path}/AdaSlide_{args.lambda_cond}_Enhanced.png")
