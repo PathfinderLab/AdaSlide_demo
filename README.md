@@ -4,7 +4,7 @@ Adaptive Compression Framework for Giga-pixel Whole Slide Images
 ## Abstract
 Digital pathology images require significant storage space, leading to high costs. To address this, compressing pathology images for storage and restoration has been proposed; however, this involves a trade-off between compression ratio and information loss. Traditional compression techniques often apply a uniform compression ratio, ignoring the variable informational content across different slide regions (information disequilibrium). \textbf{AdaSlide}, an **Ada**ptive compression framework for giga-pixel whole **Slide** images, overcomes this limitation by integrating a compression decision agent (CDA) and a foundational image enhancer (FIE), enabling adaptive compression decisions aware of information disequilibrium. The CDA uses reinforcement learning to assess each patch's necessity and degree of compression, ensuring minimal information loss and maintaining diagnostic integrity. The FIE, trained on diverse cancer types and magnifications, guarantees high-quality post-compression image restoration.
 
-The FIE's performance was evaluated using a visual Turing test, where pathology experts could barely distinguish between real images and compressed-restored images (55\% accuracy, coincidence level: 50\%). In six downstream tasks (including patch-level classification, segmentation, and slide-level classification), AdaSlide maintained the prediction performance of the original images in five out of six tasks. In contrast, traditional methods with a uniform compression ratio only maintained performance in two out of six tasks, raising concerns about information loss. Additionally, AdaSlide could store data using less than 10\% of the original WSI size. This indicates that, unlike traditional methods, AdaSlide can efficiently compress data while preserving clinically significant information. Furthermore, AdaSlide provides flexibility with its study objective-oriented reward function, compression tendency, and FIE backbone architectures. This adaptive approach ensures efficient storage and retrieval, potentially transforming the management of digital pathology data storage systems by aligning compression strategies with clinical relevance, thereby facilitating both cost reduction and improved diagnostic processes.
+The FIE's performance was evaluated using a visual Turing test, where pathology experts could barely distinguish between real images and compressed-restored images (55\% accuracy, coincidence level: 50\%). In 12 downstream tasks (including patch-level classification, segmentation, and slide-level classification), AdaSlide maintained the prediction performance of the original images in 8 out of 12 tasks. In contrast, traditional methods with a uniform compression ratio only maintained performance in two out of six tasks, raising concerns about information loss. Additionally, AdaSlide could store data using less than 10\% of the original WSI size. This indicates that, unlike traditional methods, AdaSlide can efficiently compress data while preserving clinically significant information. Furthermore, AdaSlide provides flexibility with its study objective-oriented reward function, compression tendency, and FIE backbone architectures. This adaptive approach ensures efficient storage and retrieval, potentially transforming the management of digital pathology data storage systems by aligning compression strategies with clinical relevance, thereby facilitating both cost reduction and improved diagnostic processes.
 
 ![overview](./docs/Figure_overview.png)
 
@@ -21,6 +21,34 @@ I recommend using Anaconda or Miniconda. The Python version is 3.8. This demo wa
 3. Type command: `cd CLAM/smooth-topk; python setup.py install; cd ../..`
 
 ## How to use?
+An example execution script can be found in the project folder, named `AdaSlide_TCGA-BRCA_TCGA-OL-A66K.sh`. To run this script, use the following command:
+`sh ./AdaSlide_TCGA-BRCA_TCGA-OL-A66K.sh`
+
+The folder hierarchy is as follows:
+
+```
+sample_dataset/
+└── TCGA-BRCA/
+    └── TCGA-OL-A66K/
+        ├── WSI/
+        │   └── TCGA-OL-A66K-01Z-00-DX1.svs
+        ├── CLAM_prepared/
+        │   ├── patches/
+        │   ├── segmentations/
+        │   └── stitched_images/
+        ├── HR/
+        ├── LR-x4/
+        ├── AdaSlide_lambda_050/
+        └── AdaSlide_lambda_050_decoded/
+            ├── enhanced/
+            └── reconstructed/
+                └── AdaSlide_lambda_050_enhanced.tif
+```
+
+Example WSI files can be donwloaded from [zenodo](https://zenodo.org/uploads/14719599). 
+
+Belows are detailed guide lines:
+
 1. Define project folders
    - Create a project folder like `Demo_PROJECT` and a `Demo_PROJECT/WSI` folder. Place the WSI file into the `Demo_PROJECT/WSI` folder.
 2. Preprocessing
