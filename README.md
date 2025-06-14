@@ -73,3 +73,11 @@ Belows are detailed guide lines:
 7. Restore to TIFF file
    - `python ./gen_WSI_readerable_image.py --project Demo_PROJECT --lambda_cond lambda_050 --patch_format jpg --slide_format svs`
    - **Warning**: This step is quite slow because I am not an expert in TIFF file generation. If you have any comments or advice, please leave issues!
+
+## Reproduction Environments
+
+The code has been tested on the following environments:
+
+- **Ubuntu 20.04** with Intel Xeon Gold 6326 CPU and NVIDIA RTX A6000 (48GB)
+- **CentOS 7** with Intel Xeon Gold 6326 CPU and NVIDIA A100 (80GB)
+- **Ubuntu 20.04** with Intel i7 11th Gen CPU and NVIDIA RTX 3090 (24GB)
