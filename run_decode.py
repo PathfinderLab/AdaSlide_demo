@@ -14,7 +14,7 @@ from torch.utils.data import Dataset, DataLoader
 from basicsr.archs.rrdbnet_arch import RRDBNet 
 
 def generate_results_folder(project, lambda_cond):
-    os.makedirs(f"./{project}/AdaSlide_{lambda_cond}_decoded/enhanced", exist_ok=True)
+    os.makedirs(f"{project}/AdaSlide_{lambda_cond}_decoded/enhanced", exist_ok=True)
 
 def load_FID_ESRGAN(ckpt="./FIE/net_g_latest.pth", device="cuda:0"):
     model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32)
@@ -48,18 +48,25 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--project')
     parser.add_argument('--lambda_cond', default="lambda_000")
-    parser.add_argument('--patch_format', default="jpg")
+    parser.add_argument('--patch_format', default="jpg", choices=["jpg", "png", "hybrid"])
     parser.add_argument('--FIE_weight', default="./FIE/net_g_latest.pth")
     args = parser.parse_args()
 
     generate_results_folder(args.project, args.lambda_cond)
     
-    hr_flist = glob.glob(f"{args.project}/AdaSlide_{args.lambda_cond}/HR/*.{args.patch_format}")
+    if args.patch_format in ["hybrid", "jpg"]:
+        hr_flist = glob.glob(f"{args.project}/AdaSlide_{args.lambda_cond}/HR/*.jpg")
+    elif args.patch_format == "png":
+        hr_flist = glob.glob(f"{args.project}/AdaSlide_{args.lambda_cond}/HR/*.png")
+        
     parmap.map(copy_files, hr_flist, pm_pbar=False, pm_processes=16)
     
     model = load_FID_ESRGAN(args.FIE_weight)
     
-    lr_flist = glob.glob(f"{args.project}/AdaSlide_{args.lambda_cond}/LR-x4/*.{args.patch_format}")
+    if args.patch_format in ["hybrid", "png"]:
+        lr_flist = glob.glob(f"{args.project}/AdaSlide_{args.lambda_cond}/LR-x4/*.png")
+    elif args.patch_format == "jpg":
+        lr_flist = glob.glob(f"{args.project}/AdaSlide_{args.lambda_cond}/LR-x4/*.jpg")
     
     with torch.no_grad():
         for lr_path in tqdm(lr_flist):

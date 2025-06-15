@@ -23,7 +23,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--project')
     parser.add_argument('--lambda_cond', default="lambda_000")
-    parser.add_argument('--patch_format', default="jpg")
+    parser.add_argument('--patch_format', default="jpg", choices=["jpg", "png", "hybrid"])
     parser.add_argument('--patch_size', default=512, type=int)
     parser.add_argument('--downsample', action='store_true')
     parser.add_argument('--truncation', action='store_true')
@@ -32,12 +32,22 @@ if __name__ == "__main__":
     
     # Load all JPEG images and sort by their coordinates
     images = []
-    for filename in glob.glob(f'./{args.project}/AdaSlide_{args.lambda_cond}_decoded/enhanced/*.{args.patch_format}'):
+    
+    if args.patch_format != "hybrid":
+        flist = glob.glob(f'{args.project}/AdaSlide_{args.lambda_cond}_decoded/enhanced/*.{args.patch_format}')
+    elif args.patch_format == "hybrid":
+        flist = glob.glob(f'{args.project}/AdaSlide_{args.lambda_cond}_decoded/enhanced/*.jpg') + \
+                glob.glob(f'{args.project}/AdaSlide_{args.lambda_cond}_decoded/enhanced/*.png')
+
+    for filename in flist:
         x, y = extract_coords(filename, args.downsample)
         image = pyvips.Image.new_from_file(filename, access='sequential')
         
-        if args.patch_format == "png" and image.bands == 3:
+        if filename.split(".")[-1] == "png" and image.bands == 3:
             image = image.bandjoin(255)
+        
+        if image.bands == 4:
+            image = image[:3]
         
         images.append((x, y, image))
 
@@ -82,9 +92,10 @@ if __name__ == "__main__":
             final_image = final_image.insert(img, x, y)
         
     # Save the stitched image as a pyramidal TIFF
-    result_path = f'./{args.project}/AdaSlide_{args.lambda_cond}_decoded/reconstrctued'
+    result_path = f'{args.project}/AdaSlide_{args.lambda_cond}_decoded/reconstructed'
     os.makedirs(result_path, exist_ok=True)
     result_fname = f'{result_path}/AdaSlide_{args.lambda_cond}_Enhanced.tif'
+   
     final_image.tiffsave(result_fname,
                          pyramid=True, tile=True, tile_width=1024, tile_height=1024, 
                          compression='jpeg', bigtiff=True, Q=75)

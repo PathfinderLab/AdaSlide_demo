@@ -22,21 +22,29 @@ def generate_patches(coord, project, slide_format, patch_format, level_of_intere
         patch = patch.resize((512, 512))
     else:
         patch = slide.read_region(tuple(coord), level_of_interest, (512, 512))
-    
+       
     if patch_format == "jpg":
         patch = patch.convert("RGB")
     
     project_name = os.path.basename(os.path.normpath(project))
-    patch.save(f'{project}/HR/{project_name}_{coord[0]}-{coord[1]}.{patch_format}')
     
-    lr_patch = patch.resize((128, 128))
-    lr_patch.save(f'{project}/LR-x4/{project_name}_{coord[0]}-{coord[1]}.{patch_format}')
+    if patch_format == "hybrid":
+        lr_patch = patch.resize((128, 128), resample=Image.BICUBIC)
+        lr_patch.save(f'{project}/LR-x4/{project_name}_{coord[0]}-{coord[1]}.png')
+        
+        patch.convert("RGB").save(f'{project}/HR/{project_name}_{coord[0]}-{coord[1]}.jpg')
+    
+    else: 
+        patch.save(f'{project}/HR/{project_name}_{coord[0]}-{coord[1]}.{patch_format}')
+        
+        lr_patch = patch.resize((128, 128), resample=Image.BICUBIC)
+        lr_patch.save(f'{project}/LR-x4/{project_name}_{coord[0]}-{coord[1]}.{patch_format}')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--project')
     parser.add_argument('--slide_format', default="svs")
-    parser.add_argument('--patch_format', default="jpg")
+    parser.add_argument('--patch_format', default="jpg", choices=["jpg", "png", "hybrid"])
     parser.add_argument('--processes', type=int, default=16)
     parser.add_argument('--level_of_interest', type=int, default=0)
     parser.add_argument('--is_downsample', type=bool, default=False)

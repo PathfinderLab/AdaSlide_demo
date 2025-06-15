@@ -56,6 +56,7 @@ def run_prediction(project, inference_dataloader, comp_agent_list, result_path="
     # Save results
     os.makedirs(result_path, exist_ok=True)
     result = genereate_prediction_dataframe(results_dict)
+    result.fname = result.fname.map(lambda x: x.replace(".jpg", "").replace(".png", ""))
     
     if get_prob == False:
         result.to_csv(f"{result_path}/CompAgent_inference_task-{project_name}.csv", index=False)
@@ -65,11 +66,15 @@ def run_prediction(project, inference_dataloader, comp_agent_list, result_path="
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--project')
-    parser.add_argument('--patch_format', default="jpg")
+    parser.add_argument('--patch_format', default="jpg", choices=["jpg", "png", "hybrid"])
     parser.add_argument('--get_prob', default=False, type=bool)
     args = parser.parse_args()    
     
-    flist = get_inference_image_flist(f"{args.project}/HR/*.{args.patch_format}")
+    if args.patch_format in ["hybrid", "jpg"]:
+        flist = get_inference_image_flist(f"{args.project}/HR/*.jpg")
+    elif args.patch_format == "png":
+        flist = get_inference_image_flist(f"{args.project}/HR/*.png")
+        
     inference_dataloader = define_inference_dataset_and_dataloader(flist)
     
     models, comp_agent_list = get_models()
